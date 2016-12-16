@@ -1,0 +1,42 @@
+- hosts: all
+  sudo: yes
+
+  tasks:
+  - name: Install Packages
+    apt: name={{ item }} update_cache=yes state=present
+    with_items:
+      - apache2 
+      - libapache2-mod-php
+      - git
+      - curl
+
+
+  # - name: Git Clone Repo
+  #   git: repo=https://github.com/********/spinnaker-packer-ansible-php-azure-demo.git dest=/opt/phpapp update=yes force=yes accept_hostkey=yes 
+  #   register: git_finished
+
+  - name: copy index.html
+    sudo: yes
+    copy: src=/tmp/index.html  dest=/var/www/html/index.html mode=644 
+    # shell: cp /tmp/index.html /var/www/html/index.html
+    # notify: Restart Apache
+
+  - name: copy data.php
+    sudo: yes
+    copy: src=/tmp/data.php  dest=/var/www/html/data.php mode=644 
+    # notify: Restart Apache
+
+  - name: copy drill.html
+    sudo: yes
+    copy: src=/tmp/drill.html  dest=/var/www/html/drill.html mode=644 
+    # notify: Restart Apache
+
+  - name: copy dist directory
+    sudo: yes
+    copy: src=/tmp/dist/  dest=/var/www/html/dist 
+    notify: Restart Apache
+  
+
+  handlers:
+  - name: Restart Apache
+    service: name=apache2 state=restarted

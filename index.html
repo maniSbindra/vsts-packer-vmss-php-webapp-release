@@ -1,0 +1,207 @@
+<html>
+
+<head>
+    <script src="dist/ag-grid.js"></script>
+    <script src="dist/features.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <style>
+    body {
+        padding: 30px;
+        padding-left: 70px;
+    }
+    
+    .ag-header-cell-text {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+    /*.ag-header-container {
+        background-color: #9564e2;
+        color: white;
+    }*/
+    
+    .cellStyle,
+    .butStyle {
+        font-family: 'Open Sans', sans-serif;
+        padding-top: 30px;
+    }
+    
+    #myGrid {
+        box-shadow: 4px 4px 6px #888888;
+    }
+    
+    .btn {
+        border-radius: 2px;
+    }
+    
+    .container-1 {
+        width: 300px;
+        vertical-align: middle;
+        white-space: nowrap;
+        position: relative;
+    }
+    
+    .container-1 .icon {
+        position: absolute;
+        top: 50%;
+        margin-left: 17px;
+        margin-top: 10px;
+        z-index: 1;
+        color: #ffffff;
+    }
+    
+    .container-1 input#search {
+        width: 240px;
+        height: 34px;
+        background: #337ab7;
+        border: none;
+        font-size: 14px;
+        float: left;
+        color: #ffffff;
+        padding-left: 45px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        -webkit-transition: background .55s ease;
+        -moz-transition: background .55s ease;
+        -ms-transition: background .55s ease;
+        -o-transition: background .55s ease;
+        transition: background .55s ease;
+    }
+    
+    .container-1 input#search::-webkit-input-placeholder {
+        color: #ffffff;
+    }
+    
+    .container-1 input#search:-moz-placeholder {
+        color: #ffffff;
+    }
+    
+    .container-1 input#search::-moz-placeholder {
+        color: #ffffff;
+    }
+    
+    .container-1 input#search:-ms-input-placeholder {
+        color: #ffffff;
+    }
+    
+    .container-1 input#search:hover,
+    .container-1 input#search:focus,
+    .container-1 input#search:active {
+        outline: none;
+        background: #2e6da4;
+    }
+    
+    .ag-paging-button {
+        color: #fff;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 2px;
+    }
+    
+    .ag-paging-button:hover {
+        color: #fff;
+        background-color: #286090;
+        border-color: #204d74;
+    }
+    
+    .ag-fresh .ag-paging-panel {
+        padding: 15px;
+    }
+    
+    #south {
+        height: 60px;
+    }
+    
+    .ag-fresh .ag-row-selected {
+        background-color: #3779B2 !important;
+        color: #FCF7F8;
+        opacity: 0.98;
+    }
+    </style>
+    <script>
+    // $(document).ready(function() {
+    //     $('.ag-body-viewport').click(function() {
+    //         window.location.href = 'facebook.com';
+    //     });
+    // });
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="butStyle">
+            <div class="row">
+                <div class="col-md-1">
+                    <select style="background-color: #337ab7; color: #fff; height: 34px; width: 100px;" onchange="onPageSizeChanged(this.value)">
+                        <option value="15" selected>15</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                <div class="col-md-3" style="padding-left: 60px;">
+                    <div class="box">
+                        <div class="container-1">
+                            <span class="icon"><i class="fa fa-search"></i></span>
+                            <input placeholder="SEARCH...." id="search" type="text" onpaste="onFilterChanged(this.value)" oninput="onFilterChanged(this.value)" onchange="onFilterChanged(this.value)" onchange="onFilterChanged(this.value)" onkeydown="onFilterChanged(this.value)" onkeyup="onFilterChanged(this.value)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary" onclick="sizeToFit()">Size to Fit</button>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary" onclick="autoSizeAll()">Auto-Size All</button>
+                </div>
+                <div class="col-md-1" style="padding-left: 40px;">
+                    <button class="btn btn-primary" onclick="selectAll()">Select All</button>
+                </div>
+                <div class="col-md-1" style="padding-left: 40px;">
+                    <button class="btn btn-primary" onclick="deselectAll()">Clear Selection</button>
+                </div>
+                <div class="col-md-1" style="padding-left: 80px;">
+                    <button class="btn btn-primary" onclick="hideCountry()">Hide Country</button>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 20px;">
+                <div class="col-md-1">
+                    <button class="btn btn-primary" onclick="showCountry()">Show Country</button>
+                </div>
+                <div class="col-md-2" style="padding-left: 60px;">
+                    <select style="background-color: #337ab7; color: #fff; height: 34px; width: 120px;" onchange="">
+                        <option value="Country" selected>Country</option>
+                        <option value="City">City</option>
+                        <option value="Address">Address</option>
+                        <option value="Mobile">Mobile</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cellStyle" style="padding-top: 30px;">
+        <div id="myGrid" style="height: 78%; width: 82%;" class="ag-fresh"></div>
+    </div>
+</body>
+
+</html>

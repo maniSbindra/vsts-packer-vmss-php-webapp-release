@@ -1,0 +1,1 @@
+phpunit $1site-smoke-test.php $2

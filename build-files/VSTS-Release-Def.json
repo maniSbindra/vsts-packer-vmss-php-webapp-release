@@ -1,0 +1,230 @@
+{
+    "id": 10,
+    "revision": 16,
+    "name": "packer-vmss-app-release",
+    "lastRelease": null,
+    "variables": {},
+    "variableGroups": [],
+    "environments": [
+        {
+            "id": 19,
+            "name": "QA",
+            "rank": 1,
+            "variables": {
+                "ARM_CLIENT_ID": {
+                    "value": null,
+                    "isSecret": true
+                },
+                "ARM_CLIENT_SECRET": {
+                    "value": null,
+                    "isSecret": true
+                },
+                "ARM_RESOURCE_GROUP": {
+                    "value": "packerresourcegroup"
+                },
+                "ARM_STORAGE_ACCOUNT": {
+                    "value": "packerimagestorageaccount"
+                },
+                "ARM_SUBSCRIPTION_ID": {
+                    "value": null,
+                    "isSecret": true
+                },
+                "ARM_TENANT_ID": {
+                    "value": null,
+                    "isSecret": true
+                },
+                "ADMIN_USERNAME": {
+                    "value": "createdvmusername"
+                },
+                "ADMIN_PASSWORD": {
+                    "value": "createdvmpassword"
+                },
+                "DEPLOYMENT_RESOURCE_GROUP": {
+                    "value": "rockmvmssresgrp"
+                },
+                "SITE_URL": {
+                    "value": "uitestingsiteurl"
+                }
+            },
+            "preDeployApprovals": {
+                "approvals": [
+                    {
+                        "rank": 1,
+                        "isAutomated": true,
+                        "isNotificationOn": false,
+                        "id": 59
+                    }
+                ]
+            },
+            "deployStep": {
+                "id": 60
+            },
+            "postDeployApprovals": {
+                "approvals": [
+                    {
+                        "rank": 1,
+                        "isAutomated": true,
+                        "isNotificationOn": false,
+                        "id": 61
+                    }
+                ]
+            },
+            "deployPhases": [
+                {
+                    "deploymentInput": {
+                        "parallelExecution": {
+                            "parallelExecutionType": "none"
+                        },
+                        "imageIdHint": "",
+                        "skipArtifactsDownload": false,
+                        "timeoutInMinutes": 0,
+                        "queueId": 1,
+                        "demands": [],
+                        "enableAccessToken": false
+                    },
+                    "rank": 1,
+                    "phaseType": 1,
+                    "name": "Run on agent",
+                    "workflowTasks": [
+                        {
+                            "taskId": "6c731c3c-3c68-459a-a5c9-bde6e6595b5b",
+                            "version": "2.*",
+                            "name": "Build VM Image",
+                            "enabled": true,
+                            "alwaysRun": false,
+                            "continueOnError": false,
+                            "timeoutInMinutes": 0,
+                            "definitionType": "task",
+                            "inputs": {
+                                "scriptPath": "$(System.DefaultWorkingDirectory)/RockM-Dashboard-Build/repofiles/build-files/build-vm-image.sh",
+                                "args": "$(ARM_CLIENT_ID) $(ARM_CLIENT_SECRET) $(ARM_RESOURCE_GROUP) $(ARM_STORAGE_ACCOUNT) $(ARM_SUBSCRIPTION_ID) $(ARM_TENANT_ID) $(ADMIN_USERNAME) $(ADMIN_PASSWORD)",
+                                "disableAutoCwd": "false",
+                                "cwd": "",
+                                "failOnStandardError": "false"
+                            }
+                        },
+                        {
+                            "taskId": "6c731c3c-3c68-459a-a5c9-bde6e6595b5b",
+                            "version": "2.*",
+                            "name": "Overwrite Default Deployment Parameters",
+                            "enabled": true,
+                            "alwaysRun": false,
+                            "continueOnError": false,
+                            "timeoutInMinutes": 0,
+                            "definitionType": "task",
+                            "inputs": {
+                                "scriptPath": "$(System.DefaultWorkingDirectory)/RockM-Dashboard-Build/repofiles/build-files/overwrite-azure-deployment-parameters.sh",
+                                "args": "",
+                                "disableAutoCwd": "false",
+                                "cwd": "",
+                                "failOnStandardError": "false"
+                            }
+                        },
+                        {
+                            "taskId": "46e4be58-730b-4389-8a2f-ea10b3e5e815",
+                            "version": "0.*",
+                            "name": "Push updated VM Image to VM Scaleset in target resource group",
+                            "enabled": true,
+                            "alwaysRun": false,
+                            "continueOnError": false,
+                            "timeoutInMinutes": 0,
+                            "definitionType": "task",
+                            "inputs": {
+                                "connectedServiceNameSelector": "connectedServiceNameARM",
+                                "connectedServiceNameARM": "08bbf873-5e7b-4648-8bb1-6f8608656302",
+                                "connectedServiceName": "",
+                                "scriptLocation": "scriptPath",
+                                "scriptPath": "$(System.DefaultWorkingDirectory)/RockM-Dashboard-Build/repofiles/build-files/deploy-vm-image.sh",
+                                "inlineScript": "",
+                                "args": "$(DEPLOYMENT_RESOURCE_GROUP) $(Release.ReleaseId)",
+                                "cwd": "",
+                                "failOnStandardError": "true"
+                            }
+                        },
+                        {
+                            "taskId": "6c731c3c-3c68-459a-a5c9-bde6e6595b5b",
+                            "version": "2.*",
+                            "name": "Execute UI Tests",
+                            "enabled": true,
+                            "alwaysRun": false,
+                            "continueOnError": false,
+                            "timeoutInMinutes": 0,
+                            "definitionType": "task",
+                            "inputs": {
+                                "scriptPath": "$(System.DefaultWorkingDirectory)/RockM-Dashboard-Build/repofiles/build-files/ui-tests/execute-site-smoke-tests.sh",
+                                "args": "$(System.DefaultWorkingDirectory)/RockM-Dashboard-Build/repofiles/build-files/ui-tests/ $(SITE_URL)",
+                                "disableAutoCwd": "false",
+                                "cwd": "",
+                                "failOnStandardError": "false"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "deploymentInput": {
+                        "parallelExecution": {
+                            "parallelExecutionType": "none"
+                        },
+                        "imageIdHint": "",
+                        "skipArtifactsDownload": false,
+                        "timeoutInMinutes": 0,
+                        "queueId": 2,
+                        "demands": [],
+                        "enableAccessToken": false
+                    },
+                    "rank": 2,
+                    "phaseType": 1,
+                    "name": "Run on agent",
+                    "workflowTasks": [
+                        {
+                            "taskId": "f20661eb-e0f7-4afd-9a86-9fe9d1a93382",
+                            "version": "1.*",
+                            "name": "Load Test Application",
+                            "enabled": true,
+                            "alwaysRun": false,
+                            "continueOnError": false,
+                            "timeoutInMinutes": 0,
+                            "definitionType": "task",
+                            "inputs": {
+                                "connectedServiceName": "deae8e8a-93b6-4c75-aa97-67a094251bbc",
+                                "TestDrop": "$(System.DefaultWorkingDirectory)/RockM-Dashboard-Build/repofiles/build-files/load-tests",
+                                "LoadTest": "site-load-test.jmx",
+                                "agentCount": "1",
+                                "runDuration": "60",
+                                "machineType": "0"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "environmentOptions": {
+                "emailNotificationType": "OnlyOnFailure",
+                "emailRecipients": "release.environment.owner;release.creator",
+                "skipArtifactsDownload": false,
+                "timeoutInMinutes": 0,
+                "enableAccessToken": false
+            },
+            "demands": [],
+            "conditions": [
+                {
+                    "name": "ReleaseStarted",
+                    "conditionType": 1,
+                    "value": ""
+                }
+            ],
+            "executionPolicy": {
+                "concurrencyCount": 0,
+                "queueDepthCount": 0
+            },
+            "schedules": [],
+            "retentionPolicy": {
+                "daysToKeep": 30,
+                "releasesToKeep": 3,
+                "retainBuild": true
+            }
+        }
+    ],
+    "releaseNameFormat": "Release-$(rev:r)",
+    "retentionPolicy": null
+
+}
