@@ -1,5 +1,4 @@
-### Sample project to demonstrate deployment of PHP web application using VSTS and packer
+## Sample project to demonstrate deployment of PHP web application to Azure VM scaleset using VSTS Release pipeline ( With packer, Pphunit selenium UItests, and jmeter load test)
 
-### Test Deployment commands
-* azure group create rockmvmssresgrp westus
-* azure group deployment create -f azuredeploy.json -e azuredeploy.parameters-local.json  -g rockmvmssresgrp -n rocvmssdep1
+## License
+Released under the MIT license.
