@@ -44,28 +44,28 @@
   },
     {
       "type": "file",
-      "source": "../data.php",
+      "source": "{{ template_dir }}/../../data.php",
       "destination": "/tmp/data.php"
     },
     {
       "type": "file",
-      "source": "../drill.html",
+      "source": "{{ template_dir }}/../../drill.html",
       "destination": "/tmp/drill.html"
     },
     {
       "type": "file",
-      "source": "../index.html",
+      "source": "{{ template_dir }}/../../index.html",
       "destination": "/tmp/index.html"
     },    
     {
       "type": "file",
-      "source": "../dist",
+      "source": "{{ template_dir }}/../../dist",
       "destination": "/tmp/dist"
     },
 
   {
       "type": "ansible-local",
-      "playbook_file": "./packer-files/phpapp-packer-ansible-provisioner.yml"
+      "playbook_file": "{{ template_dir }}/phpapp-packer-ansible-provisioner.yml"
   },
   {
     "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
